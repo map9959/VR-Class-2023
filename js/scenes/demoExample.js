@@ -32,8 +32,9 @@ export const init = async model => {
 	
 	model.move(0,1.5,0).scale(.3).animate(() => {
 		head.identity().scale(.5).move(0,1.5,0).turnY(Math.sin(model.time));
-		//torso.identity().turnY(Math.sin(-model.time));
+		torso.identity().turnY(Math.sin(-model.time));
 		arm_r.identity().turnX(Math.sin(-model.time));
+		elbow_r.identity().move(-1,-5.5,0).turnX(Math.min(0,Math.sin(model.time)));
 		elbow_l.identity().move(1,-5.5,0).turnX(Math.min(0,Math.sin(-model.time)));
 	});
 }
