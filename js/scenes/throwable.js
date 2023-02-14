@@ -29,7 +29,7 @@ let leftTriggerPrev = false;
 let rightTriggerPrev = false;
 
 let MP = cg.mTranslate(0,1,.5);
-let A = [0,0,0];
+let A = [0,1,.5];
 let MA = cg.mIdentity();
 
 export const init = async model => {
@@ -47,7 +47,7 @@ export const init = async model => {
 
    let boxVel_x = 0.03;
    let boxVel_y = 0.01;
-   let boxVel_z = 0.15;
+   let boxVel_z = 0.015;
 
    let timestep = 0.05;
 
@@ -57,7 +57,7 @@ export const init = async model => {
 	  let values = [Math.abs(10*boxVel_x), Math.abs(10*boxVel_y), Math.abs(10*boxVel_z)];
 	  g2.barChart(.3, .2, .5, .5, values, ["X speed", "Y speed", "Z speed"], ["red", "green", "blue"]);
    });
-	g2.addWidget(box_chart, 'button', 0, 0, "#ff8080", "enable antigravity", () => {antigravity = !antigravity;});
+	g2.addWidget(box_chart, 'button', 0.1, 0.1, "#ff8080", "enable antigravity", () => {antigravity = !antigravity;});
    
 
    // FUNCTION TO RETURN TRUE IF A POINT IS INSIDE THE BOX, OTHERWISE FALSE.
@@ -76,10 +76,13 @@ export const init = async model => {
    }
 
    
-   let beamInBox = (con, b) => {
-	  let point = con == "l" ? lcb.projectOntoBeam(box.getMatrix().slice(12,15)) : rcb.projectOntoBeam(box.getMatrix().slice(12,15));
-	  let diff = cg.subtract(point, center);
-	  return Math.abs(diff[0]) <= 1 && Math.abs(diff[1]) <= 1 && Math.abs(diff[2]) <= 1;
+   let beamInBox = (con, b, size) => {
+	  //let point = con == "l" ? lcb.projectOntoBeam(box.getMatrix().slice(12,15)) : rcb.projectOntoBeam(box.getMatrix().slice(12,15));
+	
+	  let point = con == "l" ? lcb.projectOntoBeam(A) : rcb.projectOntoBeam(A);
+	  let diff = cg.subtract(point, box.getMatrix().slice(12,15));
+	  return Math.abs(diff[0]) <= size && Math.abs(diff[1]) <= size && Math.abs(diff[2]) <= size;
+		return false;
    }
    
 
@@ -100,11 +103,11 @@ export const init = async model => {
       // EXTRACT THE LOCATION OF EACH CONTROLLER FROM ITS MATRIX,
       // AND USE IT TO SEE WHETHER THAT CONTROLLER IS INSIDE THE BOX.
 
-      let isLeftInBox  = isInBox(ml.slice(12,15));
-      let isRightInBox = isInBox(mr.slice(12,15));
+      //let isLeftInBox  = isInBox(ml.slice(12,15));
+      //let isRightInBox = isInBox(mr.slice(12,15));
 
-		//let isLeftInBox = beamInBox("l", box);
-		//let isRightInBox = beamInBox("r", box);
+		let isLeftInBox = beamInBox("l", box, 0.2);
+		let isRightInBox = beamInBox("r", box, 0.2);
 
       // IF NEITHER CONTROLLER['s beam] IS INSIDE THE BOX, COLOR THE BOX WHITE.
 
@@ -128,13 +131,7 @@ export const init = async model => {
             // COLOR THE BOX RED AND MOVE THE BOX.
 
             box.color(1,0,0);
-            let B = ml.slice(12,15);
-            if (! leftTriggerPrev)         // ON LEFT DOWN EVENT:
-               A = B;                      // INITIALIZE PREVIOUS LOCATION.
-            else
-               MP = cg.mMultiply(cg.mTranslate(cg.subtract(B, A)), MP);
-
-	    A = B;                         // REMEMBER PREVIOUS LOCATION.
+				A = lcb.projectOntoBeam(A);
          }
          leftTriggerPrev = leftTrigger;
       }
@@ -147,7 +144,7 @@ export const init = async model => {
 
          box.color(.5,.5,1);
 
-	 // IF THE RIGHT TRIGGGER IS SQUEEZED
+	 		// IF THE RIGHT TRIGGGER IS SQUEEZED
 
          let rightTrigger = buttonState.right[0].pressed;
 	      if (rightTrigger) {
@@ -160,9 +157,9 @@ export const init = async model => {
             if (! rightTriggerPrev)        // ON RIGHT DOWN EVENT:
                MA = MB;                    // INITIALIZE PREVIOUS MATRIX.
             else
-	       MP = cg.mMultiply(cg.mMultiply(MB, cg.mInverse(MA)), MP);
+	       	MP = cg.mMultiply(cg.mMultiply(MB, cg.mInverse(MA)), MP);
 
-	    MA = MB;                       // REMEMBER PREVIOUS MATRIX.
+	    		MA = MB;                       // REMEMBER PREVIOUS MATRIX.
          }
          rightTriggerPrev = rightTrigger;
       }
@@ -172,7 +169,7 @@ export const init = async model => {
       if(physics_on){
          //let current_pos = MP.slice(12,15);
          let current_pos = [...A];
-		 let friction = 0.00001;
+		 	let friction = 0.00001;
 
          boxVel_y += gravity*timestep*0.001;
          current_pos[0] += boxVel_x;
@@ -180,29 +177,34 @@ export const init = async model => {
          current_pos[2] += boxVel_z;
 
          if(Math.abs(current_pos[0]) > 4){
-			current_pos[0] = 4*Math.sign(current_pos[0]);
+				current_pos[0] = 4*Math.sign(current_pos[0]);
             boxVel_x *= -0.8;
          }
          if(Math.abs(current_pos[2]) > 3.8){
-			current_pos[2] = 3.8*Math.sign(current_pos[2]);
+				current_pos[2] = 3.8*Math.sign(current_pos[2]);
             boxVel_z *= -0.8;
          }
-         if(Math.abs(current_pos[1]) > 0.8){
-			current_pos[1] = -0.8;
+         if(current_pos[1] < -0.8){
+				current_pos[1] = -0.8;
             boxVel_y *= -0.8;
-			boxVel_x -= friction*Math.sign(boxVel_x);
-			boxVel_z -= friction*Math.sign(boxVel_z);
+				boxVel_x -= friction*Math.sign(boxVel_x);
+				boxVel_z -= friction*Math.sign(boxVel_z);
          }
+		 	if(current_pos[1] > 2){
+			 	current_pos[1] = 2;
+			 	boxVel_y *= -0.8;
+		 	}
 
          MP = cg.mMultiply(cg.mTranslate(cg.subtract(current_pos, A)), MP);
          A = current_pos;
 
-         //box.setMatrix(MP);
+         box.setMatrix(MP).scale(.2);
       }
 
       //display box
 		
-      box.setMatrix(MP).scale(.2);
+      //box.setMatrix(MP).scale(.2);
+		box.identity().move(A).scale(.2);
       physics_on = true;
       
    });
