@@ -184,8 +184,8 @@ export const init = async model => {
 				current_pos[2] = 3.8*Math.sign(current_pos[2]);
             boxVel_z *= -0.8;
          }
-         if(current_pos[1] < -0.8){
-				current_pos[1] = -0.8;
+         if(current_pos[1] < 0.2){
+				current_pos[1] = 0.2;
             boxVel_y *= -0.8;
 				boxVel_x -= friction*Math.sign(boxVel_x);
 				boxVel_z -= friction*Math.sign(boxVel_z);
@@ -198,7 +198,7 @@ export const init = async model => {
          MP = cg.mMultiply(cg.mTranslate(cg.subtract(current_pos, A)), MP);
          A = current_pos;
 
-         box.setMatrix(MP).scale(.2);
+         //box.setMatrix(MP).scale(.2);
       }
 
       //display box
