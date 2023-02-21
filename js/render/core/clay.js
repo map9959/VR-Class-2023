@@ -788,6 +788,27 @@ let convertTrianglestripToTriangles = src => {
    return mesh;
 }
 
+// import triangle mesh from stl file
+
+let trianglesMeshFromSTL = (meshname, filename) => {
+	let fullpath = "media/models/"+filename;
+	let fs = require("fs");
+	
+	try{
+		const data = fs.readFileSync("fullpath", "utf8");
+		const data_tokens = data.split('\n');
+		console.error("a");
+		const vertices_raw = data_tokens.filter(line => (line.length > 12 && line.substr(0,12) == "      vertex"));
+		const vertices_string = vertices_raw.map(e => e.split(' ').slice(7,10));
+		const vertices_unduped = vertices_string.map(e => e.map(f => parseFloat(f)));
+		const vertices = vertices_unduped.map(e => e.concat(e));
+		console.log(vertices);
+		this.defineMesh(meshname, vertices);
+	}catch(err){
+		console.error("Model could not be loaded! " + err);
+	}	
+}
+
 // COMBINE TOGETHER MULTIPLE MESHES
 
 this.combineMeshes = meshData => {

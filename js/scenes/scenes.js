@@ -24,6 +24,7 @@ export default () => {
          { name: "DemoHands"         , path: "./demoHands.js"         },
          { name: "DemoShader"        , path: "./demoShader.js"        },
          { name: "DemoTerrain"       , path: "./demoTerrain.js"       },
+         { name: "STLTest"           , path: "./stltest.js"           },
       ]
    };
 }
