@@ -788,7 +788,7 @@ let convertTrianglestripToTriangles = src => {
    return mesh;
 }
 
-// import triangle mesh from stl file
+// import triangle mesh from stl file (UNFINISHED)
 
 let trianglesMeshFromSTL = (meshname, filename) => {
 	let fullpath = "media/models/"+filename;
