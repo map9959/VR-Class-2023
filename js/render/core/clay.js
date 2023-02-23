@@ -794,7 +794,7 @@ this.trianglesMeshFromSTL = (meshname, meshdata) => {
 	try{
 		const data_tokens = meshdata.split('\n');
 		const vertices_raw = data_tokens.filter(line => (line.length > 12 && line.substr(0,12) == "      vertex"));
-		const vertices_string = vertices_raw.map(e => e.split(' ').slice(7,10));
+		const vertices_string = vertices_raw.map(e => e.split(' ').filter(el => !isNaN(parseFloat(el))));
 		const vertices_unduped = vertices_string.map(e => e.map(f => parseFloat(f)));
 		const vertices = vertices_unduped.map(e => e.concat(e));
 		this.defineMesh(meshname, this.trianglesMesh(vertices));
