@@ -25,6 +25,7 @@ export default () => {
          { name: "DemoShader"        , path: "./demoShader.js"        },
          { name: "DemoTerrain"       , path: "./demoTerrain.js"       },
          { name: "STLTest"           , path: "./stltest.js"           },
+         { name: "Synthwave"         , path: "./synthwave.js"         },
       ]
    };
 }
