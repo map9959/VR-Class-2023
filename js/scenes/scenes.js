@@ -26,6 +26,10 @@ export default () => {
          { name: "DemoTerrain"       , path: "./demoTerrain.js"       },
          { name: "STLTest"           , path: "./stltest.js"           },
          { name: "Synthwave"         , path: "./synthwave.js"         },
+         { name: "DemoRayTrace"      , path: "./demoRayTrace.js"      },
+         { name: "DemoAudio"         , path: "./demoAudio.js"         },
+         { name: "DemoWire"          , path: "./demoWire.js"          },
+         { name: "DemoBlending"      , path: "./demoBlending.js"      },
       ]
    };
 }
