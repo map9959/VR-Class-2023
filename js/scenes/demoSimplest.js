@@ -1,7 +1,10 @@
-/*
+/*****************************************************************
+
    This is the simplest "hello world" example:
    creating a single cube.
-*/
+
+*****************************************************************/
+
 export const init = async model => {
 	let head = model.add('cube').color(.5,.5,.5).move(0,1.5,0);
 	let eye_left = head.add();
